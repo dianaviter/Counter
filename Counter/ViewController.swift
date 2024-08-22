@@ -8,16 +8,18 @@
 import UIKit
 
 class ViewController: UIViewController {
-
-    @IBOutlet weak var counterValue: UILabel!
-    @IBOutlet weak var addOneButton: UIButton!
-    @IBOutlet weak var subtractOneButton: UIButton!
-    @IBOutlet weak var resetButton: UIButton!
-    @IBOutlet weak var historyOfChanges: UITextView!
     
-    var counterValueAfterClick: Int = 0
-    var historyArray: [String] = []
-    let initialText = "История изменений: "
+    private var sarunw: String = ""
+    
+    @IBOutlet private weak var counterValue: UILabel!
+    @IBOutlet private weak var addOneButton: UIButton!
+    @IBOutlet private weak var subtractOneButton: UIButton!
+    @IBOutlet private weak var resetButton: UIButton!
+    @IBOutlet private weak var historyOfChanges: UITextView!
+    
+    private var counterValueAfterClick: Int = 0
+    private var historyArray: [String] = []
+    private let initialText = "История изменений: "
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -27,8 +29,26 @@ class ViewController: UIViewController {
         historyOfChanges.isEditable = false
     }
     
+    private func currentDateAndTime () -> String {
+        let currentDate = Date()
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "dd MMMM yyyy, HH:mm:ss"
+        dateFormatter.locale = Locale(identifier: "ru_RU")
+        
+        let formattedDate = dateFormatter.string(from: currentDate)
+        return formattedDate
+    }
     
-    @IBAction func addButtonDidTap(_ sender: Any) {
+    private func updateHistoryOfChanges () {
+        let historyOfChangeText = historyArray.joined()
+        let finalText = "\(initialText)\n\(historyOfChangeText)"
+        historyOfChanges.text = finalText
+        
+        let newTextEndRange = NSRange(location: historyOfChangeText.count, length: 0)
+        historyOfChanges.scrollRangeToVisible(newTextEndRange)
+    }
+    
+    @IBAction private func addButtonDidTap(_ sender: Any) {
         counterValueAfterClick += 1
         counterValue.text = "Значение счётчика:\n\n\(counterValueAfterClick)"
         
@@ -37,7 +57,7 @@ class ViewController: UIViewController {
         updateHistoryOfChanges ()
     }
     
-    @IBAction func subtractButtonDidTap(_ sender: Any) {
+    @IBAction private func subtractButtonDidTap(_ sender: Any) {
         let actionDateAndTime = currentDateAndTime()
         if counterValueAfterClick > 0 {
             counterValueAfterClick -= 1
@@ -51,8 +71,7 @@ class ViewController: UIViewController {
         updateHistoryOfChanges ()
     }
     
-    
-    @IBAction func resetCounter(_ sender: Any) {
+    @IBAction private func resetCounter(_ sender: Any) {
         counterValue.text = "Значение счётчика:\n\n0"
         counterValueAfterClick = 0
         
@@ -60,26 +79,6 @@ class ViewController: UIViewController {
         historyArray.append("\(actionDateAndTime): значение сброшено\n")
         updateHistoryOfChanges ()
         
-    }
-    
-    private func currentDateAndTime () -> String {
-        let currentDate = Date()
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "dd MMMM yyyy, HH:mm:ss"
-        dateFormatter.locale = Locale(identifier: "ru_RU")
-
-        let formattedDate = dateFormatter.string(from: currentDate)
-        return formattedDate
-    }
-    
-    private func updateHistoryOfChanges () {
-        let historyOfChangeText = historyArray.joined()
-        let finalText = "\(initialText)\n\(historyOfChangeText)"
-        historyOfChanges.text = finalText
-        
-        let newTextEndRange = NSRange(location: historyOfChangeText.count, length: 0)
-        historyOfChanges.scrollRangeToVisible(newTextEndRange)
-
     }
 }
 
